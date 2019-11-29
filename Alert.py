@@ -6,10 +6,10 @@ from selenium.webdriver.chrome.options import Options
 
 class Alert(Thread):
 
-    def __init__(self, stop_event, refresh_time, coursecode, classnum):
+    def __init__(self, stop_event, coursecode, classnum, refresh_time):
         Thread.__init__(self)
         self.stopped = stop_event
-        self.refresh_time = refresh_time
+        self.refresh_time = refresh_time * 60 #to make it into minutes
         self.course_code = coursecode
         self.class_num = classnum
         self.data = []
@@ -19,17 +19,17 @@ class Alert(Thread):
         self.open_class() #just open everything now
 
     def run(self):
-        print("Initializing {} {}".format(self.course_code, self.class_num))
+        #print("Initializing {} {}".format(self.course_code, self.class_num))
         #self.open_class() #open all of the right pages.
 
         self.gather_data() #do this so we don't have to wait the full refresh time.
         #then we can go into the loop
 
         while not self.stopped.wait(self.refresh_time):
-            print("Scanning {} {} and then waiting {} seconds.".format(self.course_code, self.class_num,
-                                                                           self.refresh_time))
+            print("Scanning {} {} and then waiting {} minutes.".format(self.course_code, self.class_num,
+                                                                           self.refresh_time / 60))
             #now this is where we gather the data...
-            self.driver.refresh()
+            self.driver.refresh() #refresh before you do it
             self.data.clear()
             self.gather_data()
 
@@ -43,7 +43,7 @@ class Alert(Thread):
 
 
     def update_timer(self, new_refresh_time):
-        self.refresh_time = new_refresh_time
+        self.refresh_time = new_refresh_time * 60
 
 
     def open_class(self):
