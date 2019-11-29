@@ -1,5 +1,5 @@
 # MSUScheduleWatcher
-A program that allows you to set alerts to watch the classes you want to get into, and alert you if they open.
+A program that will repeatedly search schedule.msu.edu for you, notifying you if your requested classes are available.
 
 When the program is finished, the user will be able to specify classes https://schedule.msu.edu. The program will continually
 watch them, and alert the user via text message if a section becomes available. The program will support multiple alerts of any classes,
