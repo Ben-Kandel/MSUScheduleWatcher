@@ -3,6 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.options import Options
 #from selenium.webdriver.common.keys import Keys
+#from colorama import Back
 
 class Alert(Thread):
 
@@ -37,6 +38,13 @@ class Alert(Thread):
         print()
         print("Printing data for {} {}".format(self.course_code, self.class_num))
         for section in self.data:
+            """
+            p = "Section {}, {}/{}, Class open? {}".format(section[0], section[1], section[2], section[3])
+            if section[3]:
+                print(Back.GREEN + p)
+            else:
+                print(Back.RED + p)
+            """
             print("Section {}, {}/{}, Class open? {}".format(section[0], section[1], section[2], section[3]))
         print("End of {} {}".format(self.course_code, self.class_num))
         print()
@@ -62,6 +70,7 @@ class Alert(Thread):
         counter = 1
         for table in tables:
             #xpath = '//*[@id="MainContent_divHeader1_va"]/h3[{}]/a'.format(counter)
+            #this_class = self.driver.find_element_by_xpath(xpath)
             for row in table.find_elements_by_css_selector('tr'):
                 section = ""
                 currently_enrolled = 0
