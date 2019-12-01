@@ -18,5 +18,8 @@ A work in progress. As of 11/27/19, Alerts are working great.
 However, there is no user input.
 
 
-11/29/19
+11/29/19:
 User input added. Users are able to update the refresh time of each alert. Users are able to specify multiple classes within a course, ie. STT 351 430 441
+
+11/30/19:
+Implemented text message alerts, which are off by default. For now, you have to use the update command to turn them on for each alert. Currently, you have to enter your phone number every time you run the program, which is slightly annoying, but I have a few solutions in mind. I'm not liking how cluttered the main.py file is becoming, so I'm going to want to clean it up. It's the user input that complicates things. I think next on the to-do list is to implement loadable/saveable config files.
