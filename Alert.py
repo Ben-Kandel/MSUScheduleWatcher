@@ -2,12 +2,13 @@ from threading import Thread
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.options import Options
+import nexmo
 #from selenium.webdriver.common.keys import Keys
 #from colorama import Back
 
 class Alert(Thread):
 
-    def __init__(self, stop_event, coursecode, classnum, refresh_time):
+    def __init__(self, stop_event, coursecode, classnum, refresh_time, phone_number):
         Thread.__init__(self)
         self.stopped = stop_event
         self.refresh_time = refresh_time * 60 #to make it into minutes
@@ -18,13 +19,14 @@ class Alert(Thread):
         o.add_argument("--headless")
         self.driver = webdriver.Chrome(options=o)
         self.open_class() #just open everything now
+        self.send_text = False
+        self.phone_num = phone_number
 
     def run(self):
         #print("Initializing {} {}".format(self.course_code, self.class_num))
         #self.open_class() #open all of the right pages.
 
-        self.gather_data() #do this so we don't have to wait the full refresh time.
-        #then we can go into the loop
+        self.gather_data() #do this now, or else we'll have to wait the whole refresh time before we get any data.
 
         while not self.stopped.wait(self.refresh_time):
             print("Scanning {} {} and then waiting {} minutes.".format(self.course_code, self.class_num,
@@ -33,6 +35,7 @@ class Alert(Thread):
             self.driver.refresh() #refresh before you do it
             self.data.clear()
             self.gather_data()
+            self.check_open()
 
     def print_data(self):
         print()
@@ -87,3 +90,15 @@ class Alert(Thread):
                     l = [section, currently_enrolled, max_enrolled, class_open]
                     self.data.append(l)
             counter += 1
+
+    def should_notify(self, update):
+        self.send_text = update
+
+    def check_open(self):
+        if self.send_text: #we should only bother checking if the user specified they wanted text message alerts.
+            for section in self.data:
+                if section[3]: #checking if there is an open spot in the section. we correctly set this in gather_data()
+                    client = nexmo.Client(key="0780d3fa", secret="dDFIQfryHQioPD6n")
+                    message = "Open Class: {} {}, Section {}".format(self.course_code, self.class_num, section[0])
+                    cost = client.send_message({'from': '17866409395', 'to': self.phone_num, 'text': message})
+                    #print(cost) #this is just for debugging purposes, will comment out or remove later.
